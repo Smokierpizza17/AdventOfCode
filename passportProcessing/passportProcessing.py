@@ -3,6 +3,7 @@ with open("input.txt", "r") as inputFile:
     for passport in inputFile.read().split("\n\n"):
         taskInput.append(passport.replace("\n", " "))
 
+taskInput.pop(-1)  # removes the newline at the end of the file
 
 def isValidHgt(hgt):
     '''checks height according to https://adventofcode.com/2020/day/4#part2'''
