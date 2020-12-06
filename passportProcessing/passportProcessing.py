@@ -5,6 +5,7 @@ with open("input.txt", "r") as inputFile:
 
 taskInput.pop(-1)  # removes the newline at the end of the file
 
+
 def isValidHgt(hgt):
     '''checks height according to https://adventofcode.com/2020/day/4#part2'''
     if "".join(list(hgt)[-2:]) == "cm":  # checks last two letters for "cm"
