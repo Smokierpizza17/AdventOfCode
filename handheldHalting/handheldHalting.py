@@ -5,7 +5,7 @@ taskInput.pop(-1)  # removes newLine at the end of the File
 
 
 def toggleJmpNop(instructions, line):
-    '''changes instruction from Nop to Jmp, or vice versa'''
+    '''changes instruction from Nop to Jmp, or vice versa, returns all instr'''
     oper = instructions[line-1].split(" ")[0]
     if oper == "jmp":
         instructions[line-1] = instructions[line-1].replace("jmp", "nop")
@@ -28,21 +28,29 @@ def interpret(instruction, acc):
         return 1, acc + int(arg)
 
 
-visitedLines = []
-currLine = 1
-acc = 0
-newAcc = 0
-while visitedLines.count(currLine) < 2:  # currLine can exist only once
-    acc = newAcc
-    deltaLine, newAcc = interpret(taskInput[currLine - 1], acc)
-    currLine += deltaLine
+def codeValidator(instructions):
+    '''Returns the ACC value if the code finishes, otherwise False'''
+    visitedLines = []
+    currLine = 1
+    acc = 0
+    newAcc = 0
+    while visitedLines.count(currLine) < 2:  # currLine can exist only once
+        acc = newAcc
+        deltaLine, newAcc = interpret(taskInput[currLine - 1], acc)
+        currLine += deltaLine
+        if currLine == len(taskInput) + 1:
+            return newAcc
+        visitedLines.append(currLine)
+    return None
 
-    if currLine == len(taskInput):
-        print("Program ended with ACC %s" % newAcc)
 
-    visitedLines.append(currLine)
+for line in range(1, len(taskInput)):
+    if taskInput[line-1].split(" ")[0] == "jmp":
+        newInstr = toggleJmpNop(taskInput, line)
+    elif taskInput[line-1].split(" ")[0] == "nop":
+        newInstr = toggleJmpNop(taskInput, line)
+    else:
+        continue
 
-print("ACC value was %s before %s was executed twice." % (acc, currLine))
-print("DEBUG:")
-for i in visitedLines:
-    print(i)
+    if codeValidator(newInstr) is not None:
+        print(codeValidator(newInstr))
