@@ -6,14 +6,18 @@ taskInput.pop(-1)  # removes newLine at the end of the File
 
 def toggleJmpNop(instructions, line):
     '''changes instruction from Nop to Jmp, or vice versa, returns all instr'''
-    oper = instructions[line-1].split(" ")[0]
+    tmpInstr = []
+    for i in instructions:
+        tmpInstr.append(i)
+
+    oper = instructions[line].split(" ")[0]
     if oper == "jmp":
-        instructions[line-1] = instructions[line-1].replace("jmp", "nop")
+        tmpInstr[line] = tmpInstr[line].replace("jmp", "nop")
     elif oper == "nop":
-        instructions[line-1] = instructions[line-1].replace("jmp", "nop")
+        tmpInstr[line] = tmpInstr[line].replace("nop", "jmp")
     else:
         raise IndexError("operation isn't JMP/NOP!")
-    return instructions
+    return tmpInstr
 
 
 def interpret(instruction, acc):
@@ -28,29 +32,33 @@ def interpret(instruction, acc):
         return 1, acc + int(arg)
 
 
-def codeValidator(instructions):
+def codeValidator(checkInstr):
     '''Returns the ACC value if the code finishes, otherwise False'''
     visitedLines = []
-    currLine = 1
+    currLine = 0
     acc = 0
     newAcc = 0
     while visitedLines.count(currLine) < 2:  # currLine can exist only once
         acc = newAcc
-        deltaLine, newAcc = interpret(taskInput[currLine - 1], acc)
+        deltaLine, newAcc = interpret(checkInstr[currLine], acc)
         currLine += deltaLine
-        if currLine == len(taskInput) + 1:
+
+        if deltaLine == 0:  # jmp 0 indicates loop
+            return None
+
+        if currLine == len(checkInstr):  # if at the end of the file
             return newAcc
         visitedLines.append(currLine)
     return None
 
 
-for line in range(1, len(taskInput)):
-    if taskInput[line-1].split(" ")[0] == "jmp":
+for line in range(0, len(taskInput)):
+    if taskInput[line].split(" ")[0] == "jmp":
         newInstr = toggleJmpNop(taskInput, line)
-    elif taskInput[line-1].split(" ")[0] == "nop":
+    elif taskInput[line].split(" ")[0] == "nop":
         newInstr = toggleJmpNop(taskInput, line)
     else:
         continue
-
-    if codeValidator(newInstr) is not None:
-        print(codeValidator(newInstr))
+    acc = codeValidator(newInstr)
+    if acc is not None:
+        print(acc)
