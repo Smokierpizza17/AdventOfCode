@@ -11,20 +11,23 @@ intTaskInput.sort()
 
 intTaskInput.append(intTaskInput[-1] + 3)  # factor in device adapter
 
-oneDiffCounter = 0
-threeDiffCoutner = 0
-for i in range(1, len(intTaskInput)):
-    curr = intTaskInput[i]
-    prev = intTaskInput[i - 1]
-    diff = curr - prev
+endNodeCounter = 0
 
-    if diff == 1:
-        oneDiffCounter += 1
-    elif diff == 3:
-        threeDiffCoutner += 1
-    else:
-        raise TypeError("difference other than one or three found!")
 
-print("one diffs: %s" % oneDiffCounter)
-print("three difs : %s" % threeDiffCoutner)
-print("product: %s" % (oneDiffCounter * threeDiffCoutner))
+def genTreeStep(startNum):
+    global endNodeCounter
+    validAdapters = [startNum + 1, startNum + 2, startNum + 3]
+    anyValid = False
+    for i in validAdapters:
+        if i in intTaskInput:
+            anyValid = True
+            genTreeStep(i)
+    if not anyValid:
+        endNodeCounter += 1
+        if endNodeCounter % 1000000 == 0:
+            print(endNodeCounter / 1000000000000)
+
+
+genTreeStep(0)
+
+print(endNodeCounter)
