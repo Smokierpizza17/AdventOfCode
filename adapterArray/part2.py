@@ -11,23 +11,45 @@ intTaskInput.sort()
 
 intTaskInput.append(intTaskInput[-1] + 3)  # factor in device adapter
 
-endNodeCounter = 0
+
+def splitByThreeDiffs(adapterArray):
+    '''Returns list of lists, each a chain of one diff adapters'''
+    finalArray = []
+    currentSeries = []
+    for index, adapter in enumerate(adapterArray[:-1]):
+        nextAdapter = adapterArray[index + 1]
+        nextDiff = nextAdapter - adapter
+        currentSeries.append(adapter)
+        if nextDiff == 3:
+            finalArray.append(currentSeries)
+            currentSeries = []
+    return finalArray
 
 
-def genTreeStep(startNum):
-    global endNodeCounter
+nodes = 0
+
+
+def countTree(map, startNum, master=False):
+    global nodes
+    if master:
+        nodes = 0
     validAdapters = [startNum + 1, startNum + 2, startNum + 3]
     anyValid = False
     for i in validAdapters:
-        if i in intTaskInput:
+        if i in map:
             anyValid = True
-            genTreeStep(i)
+            countTree(map, i)
     if not anyValid:
-        endNodeCounter += 1
-        if endNodeCounter % 1000000 == 0:
-            print(endNodeCounter / 1000000000000)
+        nodes += 1
+    if master:
+        return nodes
 
 
-genTreeStep(0)
+splitArray = splitByThreeDiffs(intTaskInput)
+runningProduct = 1
 
-print(endNodeCounter)
+for tree in splitArray:
+    nodes = countTree(tree, tree[0], True)
+    runningProduct = runningProduct * countTree(tree, tree[0], True)
+
+print("Possible adapter arrangements: %s" % runningProduct)
