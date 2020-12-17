@@ -1,6 +1,6 @@
 import re
 
-with open("testinput2.txt", "r") as inputFile:
+with open("input.txt", "r") as inputFile:
     inputGroups = inputFile.read().split("\n\n")
 
 inputLines = []
@@ -10,7 +10,11 @@ for i in inputGroups:
 inputLines[2].pop(0)  # remove "nearby tickets:" from lines
 inputLines[2].pop(-1)  # remove newline at the end of the file
 
+myTicket = inputLines[1][1].split(",")  # group 2, avoid "my ticket:"
+print(myTicket)
 ruleDict = {}  # key is attribute, value is list of ranges that are valid
+
+allAttr = []
 
 
 def isWithinAttribRange(attribName, value):
@@ -42,6 +46,7 @@ def isAllValid(values):
 for rule in inputLines[0]:
     getAttrib = re.compile(r".+?(?=:)")
     attrib = re.findall(getAttrib, rule)[0]
+    allAttr.append(attrib)
 
     getRangevalues = re.compile(r"\d+")
     rangeValues = re.findall(getRangevalues, rule)
@@ -74,8 +79,28 @@ for index in range(len(combedTickets[0])):
             param = int(ticket[index])
             validArray.append(isWithinAttribRange(attrib, param))
         allValid = isAllValid(validArray)
-        print("%s:\t%s:\t%s" % (index, attrib, validArray))
         attrMap[attrib] = allValid
     indexAttrMap[index] = attrMap
 
+assignedAttr = {}
+while len(assignedAttr) != len(allAttr):
+    for index, attrMap in indexAttrMap.items():
+        latestTrueAttr = None
+        numAllTrue = 0
+        for attr, allTrue in attrMap.items():
+            if attr in assignedAttr.values():
+                continue
+            if allTrue:
+                numAllTrue += 1
+                latestTrueAttr = attr
+        if numAllTrue == 1:
+            assignedAttr[index] = latestTrueAttr
 
+finalProduct = 1  # because times
+for index, attr in assignedAttr.items():
+    print(attr)
+    if "departure" in attr:
+        value = int(myTicket[index])
+        finalProduct = finalProduct * value
+
+print("final product is %s" % finalProduct)
