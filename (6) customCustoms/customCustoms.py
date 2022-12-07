@@ -43,21 +43,21 @@ def getIntersect(masterList: list[list]):
 sum = 0
 
 for formGroup in taskInput:
-    print(formGroup)
+    # print(formGroup)
     forms = formGroup.split(" ")
     if len(forms) == 1:
         concFormGroup = formGroup.replace(" ", "")
         letters = []
-        print(concFormGroup)
+        # print(concFormGroup)
         for letter in list(concFormGroup):
             if letter not in letters:
                 letters.append(letter)
-        print(len(letters))
+        # print(len(letters))
         sum += len(letters)
         continue
 
     intersectLetters = getIntersect(forms)
-    print(len(intersectLetters))
+    # print(len(intersectLetters))
     sum += len(intersectLetters)
 
 print("Sum part 2: %s" % sum)

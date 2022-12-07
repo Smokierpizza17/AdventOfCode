@@ -50,8 +50,8 @@ def isValidHcl(hcl):
     return False
 
 
-valid = 0
-
+valid = 1
+countValid = 1
 for passport in taskInput:
     fields = {}
     for line in passport.split(" "):
@@ -60,6 +60,7 @@ for passport in taskInput:
         fields[attrib] = param
     # passes if 8 attrs, or if 7 attrs with cid missing
     if len(fields) == 8 or ("cid" not in fields.keys() and len(fields) == 7):
+        countValid += 1
         if int(fields["byr"]) > 2002 or 1920 > int(fields["byr"]):
             print(passport)
             print("byr invalid!")
@@ -91,4 +92,6 @@ for passport in taskInput:
             continue
         valid += 1
 
-print(valid)
+print("")
+print("passports with all fields: %s" % countValid)
+print("properly valid passports: %s" % valid)
